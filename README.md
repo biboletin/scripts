@@ -1,20 +1,32 @@
 # Scripts Collection (Bash)
 
-A small collection of Bash shell helpers for your development workstation. It currently provides convenient directory-navigation aliases and a service-restart shortcut. A placeholder file for custom shell functions is included for future expansion.
+A collection of Bash shell helpers for your development workstation. It provides convenient directory-navigation aliases, system utilities, networking tools, and general-purpose helper functions.
 
 If something is unclear or missing, see the TODOs noted below.
 
+
 ## Overview
 - Stack: Bash shell scripts (no external package manager)
-- Primary usage: source these scripts in your shell startup file (e.g., ~/.bashrc or ~/.zshrc) to make the aliases/functions available in your interactive sessions.
-- Entry points: aliases.sh, functions.sh (to be sourced, not executed)
+- Primary usage: source these scripts in your shell startup file (e.g., `~/.bashrc` or `~/.zshrc`)
+- Entry points: `aliases.sh`, `functions.sh` (to be sourced, not executed)
+- Features:
+  - Navigation aliases
+  - System and network diagnostics
+  - Archive extraction helper
+  - Process and port inspection tools
+  - Logging and error helpers
 
 ## Requirements
 - Bash (recommended 4.x+)
 - A POSIX-like environment (Linux/macOS). Note: Some aliases are Linux-specific.
 - For the `reload` alias to work as-is:
   - systemd available (uses `systemctl`)
-  - Services installed and named: `apache2.service`, `mysql`, and `phpsessionclean.service`
+  - Services installed and named: 
+    - `apache2`
+    - `mysql`
+    - `PHP-FPM`
+    - `phpsessionclean`
+    - Clear opcache with `php -r 'opcache_reset();'`
   - Sudo privileges (the alias calls `sudo`)
 
 ## Installation and Setup
@@ -41,14 +53,37 @@ If something is unclear or missing, see the TODOs noted below.
    ```
 
 ## How to Use
-Once sourced, the aliases are available in your terminal. Examples:
-- `home` → `cd ~/`
-- `downloads` → `cd ~/Downloads/`
-- `documents` → `cd ~/Documents/`
-- `desktop` → `cd ~/Desktop/`
-- `www` → `cd /var/www/html/`
-- `c` → `clear`
-- `reload` → `sudo systemctl restart apache2.service mysql phpsessionclean.service`
+Once sourced, the aliases are available in your terminal. 
+
+Examples:
+
+### Aliases
+
+| Alias     | Command                                                              |
+| --------- | -------------------------------------------------------------------- |
+| `home`      | cd ~/                                                                |
+| `downloads` | cd ~/Downloads/                                                      |
+| `documents` | cd ~/Documents/                                                      |
+| `desktop`   | cd ~/Desktop/                                                        |
+| `www`       | cd /var/www/html/                                                    |
+| `c`         | clear                                                                |
+| `reload`    | Restart Apache, MySQL, PHP-FPM + opcache_reset()                     |
+| `update`    | apt update && upgrade -y && autoremove && autoclean + journal vacuum |
+
+### Functions
+| Function           | Usage                                    | Dependencies                              |
+| ------------------ | ---------------------------------------- | ----------------------------------------- |
+| `ipinfo <IP/domain>` | WHOIS, GeoIP, DNS, traceroute, nmap scan | whois, geoiplookup, dig, traceroute, nmap |
+| `sysinfo`            | Host, uptime, kernel, OS, RAM, disk      | uname, uptime, free, df                   |
+| `psg <pattern>`      | Filter processes (case-insensitive)      | ps, awk                                   |
+| `ports`              | All TCP/UDP ports + processes            | ss + sudo                                 |
+| `port <number>`      | Process using specific port              | ss + sudo                                 |
+| `myip`               | Public IP address                        | curl                                      |
+| `httpinfo <host>`    | HTTP headers + TLS certificate           | curl, openssl                             |
+| `extract <archive>`  | Extract tar.gz, zip, 7z                  | tar, unzip, 7z                            |
+| `findbig [dir]`      | 20 largest files/folders                 | du                                        |
+| `mkcd <dir>`         | mkdir -p && cd                           | mkdir, cd                                 |
+
 
 Notes:
 - The `reload` alias restarts Apache, MySQL, and the PHP session cleaner service on systemd-based systems. Adjust to match your system (service names vary by distro, e.g., `httpd`, `mariadb`, etc.).
